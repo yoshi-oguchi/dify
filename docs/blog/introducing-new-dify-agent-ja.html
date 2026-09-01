@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Agent のご紹介 — Dify</title>
+  <meta name="description" content="Dify の Agent は、独立したアプリとして、あるいはワークフローで再利用できるリソースとして使えるようになりました。一度構築し、継続的に改善し、Web アプリ・API・複数ワークフローで公開・再利用できます。">
+  <meta name="author" content="Dify">
+  <link rel="canonical" href="https://dify.ai/blog/introducing-new-dify-agent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #101828;
+      --ink-muted: #475467;
+      --fog: #667085;
+      --line: #e4e7ec;
+      --bg: #ffffff;
+      --bg-soft: #f9fafb;
+      --brand: #0033ff;
+      --brand-hover: #0029cc;
+      --quote: #f2f4f7;
+      --table-head: #f8fafc;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Inter", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.8;
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      padding: 16px 24px;
+    }
+
+    .topbar-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 14px;
+      color: var(--fog);
+    }
+
+    .topbar-inner a { color: var(--ink-muted); }
+
+    article {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 24px 96px;
+    }
+
+    .kicker {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      color: var(--fog);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .kicker time { color: var(--fog); }
+
+    h1.title {
+      font-size: clamp(32px, 5vw, 44px);
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .lead-note {
+      color: var(--ink-muted);
+      font-size: 15px;
+      margin: 0 0 32px;
+    }
+
+    .hero {
+      margin: 0 0 40px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+    }
+
+    .hero img,
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    figure {
+      margin: 28px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+    }
+
+    figcaption {
+      font-size: 13px;
+      color: var(--fog);
+      padding: 10px 14px 12px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
+    h1, h2, h3 {
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    h1.section {
+      font-size: 30px;
+      margin: 56px 0 16px;
+      padding-top: 8px;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin: 44px 0 14px;
+    }
+
+    h3 {
+      font-size: 20px;
+      margin: 32px 0 12px;
+    }
+
+    p { margin: 0 0 18px; }
+
+    ul {
+      margin: 0 0 20px;
+      padding-left: 1.3em;
+    }
+
+    li { margin: 0 0 8px; }
+
+    strong { font-weight: 700; }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.9em;
+      background: var(--quote);
+      padding: 0.12em 0.4em;
+      border-radius: 4px;
+    }
+
+    blockquote {
+      margin: 20px 0;
+      padding: 14px 18px;
+      background: var(--quote);
+      border-left: 4px solid var(--brand);
+      border-radius: 0 8px 8px 0;
+      color: var(--ink);
+    }
+
+    blockquote p { margin: 0; }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0 28px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      min-width: 560px;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: var(--table-head);
+      font-weight: 600;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 8px;
+      padding: 12px 22px;
+      background: var(--brand);
+      color: #fff !important;
+      border-radius: 999px;
+      font-weight: 600;
+      text-decoration: none !important;
+    }
+
+    .cta:hover { background: var(--brand-hover); }
+
+    .source {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--fog);
+    }
+
+    @media (max-width: 640px) {
+      article { padding: 36px 18px 72px; }
+      html, body { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span>Dify ブログ（日本語訳）</span>
+      <a href="https://dify.ai/blog/introducing-new-dify-agent" target="_blank" rel="noopener noreferrer">原文を見る</a>
+    </div>
+  </div>
+
+  <article>
+    <div class="kicker">
+      <span>Dify</span>
+      <span aria-hidden="true">·</span>
+      <time datetime="2026-08-27">2026年8月27日</time>
+      <span aria-hidden="true">·</span>
+      <span>翻訳</span>
+    </div>
+
+    <h1 class="title">New Agent のご紹介</h1>
+    <p class="lead-note">原文: <a href="https://dify.ai/blog/introducing-new-dify-agent" target="_blank" rel="noopener noreferrer">Introducing New Agent</a>（Dify 公式ブログ）</p>
+
+    <div class="hero">
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/width=1472,onerror=redirect/official/blog/2026/08/20260826-151420.jpeg"
+        alt="Introducing New Agent">
+    </div>
+
+    <p><strong>本日、New Agent を発表します。</strong></p>
+
+    <p>Dify の Agent は、独立したアプリとして、あるいはワークフローで再利用できるリソースとして使えるようになりました。各 Agent は独自の設定とライフサイクルを持ちます。一度構築し、継続的に改善し、Web アプリとして公開する、API として公開する、複数のワークフローで再利用する——いずれも可能です。</p>
+
+    <p>AI エージェントは、概念実証（PoC）から実際のビジネス利用へと急速に移行しています。<a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai/" target="_blank" rel="noopener noreferrer">McKinsey の 2025 State of AI 調査</a>によると、回答者の 62% が自社で AI エージェントを少なくとも実験していると答えています。導入が進むにつれ、新たな問いが生まれます。誰が Agent を保守するのか。どこで使われているのか。チームはどう安全に更新し、実行が失敗したときに何が起きたかを把握できるのか。</p>
+
+    <p>これらの問いが、Dify における Agent のあり方を再考するきっかけになりました。そして New Agent 体験が、その答えです。</p>
+
+    <h1 class="section">Agent ノードから New Agent へ</h1>
+
+    <p>2025年3月、Dify は <a href="https://dify.ai/blog/dify-agent-node-introduction-when-workflows-learn-autonomous-reasoning" target="_blank" rel="noopener noreferrer">Agent ノードと Agent Strategies</a> を導入し、モデルがワークフロー内で自律的に推論し、ツールを使えるようにしました。</p>
+
+    <p>しかし、各 Agent は構築したワークフローに紐づいたままでした。同じ能力を別の場所で使うには、プロンプト、ツール、その他の設定を一から作り直す必要がありました。</p>
+
+    <p><strong>New Agent は、これを変えます。</strong></p>
+
+    <p>各 Agent は、モデル、プロンプト、スキル、ファイル、ツール設定の唯一の情報源（Single Source of Truth）を持つようになりました。一箇所で保守し、数クリックで異なるアプリやワークフローに再利用できます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/whydifyagent.png"
+        alt="Why Dify Agent">
+      <figcaption>Why Dify Agent</figcaption>
+    </figure>
+
+    <h3>一箇所で Agent を構築・管理・追跡する</h3>
+
+    <p>再利用可能な Agent に必要なのは、設定画面だけではありません。チームには、実際の業務を通じて磨き、異なる文脈で適用し、本番での振る舞いから学んで改善する手段が必要です。</p>
+
+    <p><strong>New Agent 体験は、次の3つを軸に設計されています。</strong></p>
+
+    <ul>
+      <li><strong>Build（構築）:</strong> 柔軟な設定モードで、実際の業務を、ビジネスワークフロー全体で再利用できる Agent の能力に変える。</li>
+      <li><strong>Manage（管理）:</strong> 1つの Agent を複数のワークフローで再利用し、重複と保守コストを減らす。</li>
+      <li><strong>Track（追跡）:</strong> 単一実行のトレーシングと長期モニタリングにより、完全なホワイトボックスの可観測性を得る。</li>
+    </ul>
+
+    <h2>Build: 実際の業務を通じて Agent を磨く</h2>
+
+    <p>優れた Agent は、実際にこなす仕事によって形作られます。</p>
+
+    <p>目標は明確でも、どのツールが必要か、境界はどこにあるべきか、どの手法を残すべきかは、使いながら見えてくるものです。</p>
+
+    <p>Dify では、次の2つの始め方ができます。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>アプローチ</th>
+            <th>向いているケース</th>
+            <th>仕組み</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Configure</strong></td>
+            <td>目標が明確で、進め方が定まっている</td>
+            <td><strong>手動で設定:</strong> モデルを選び、プロンプトを書き、スキル、ファイル、ツールを追加する。</td>
+          </tr>
+          <tr>
+            <td><strong>Build mode</strong></td>
+            <td>目標は明確だが、進め方は変わりうる</td>
+            <td><strong>AI と一緒に構築:</strong> 目標を説明すると、Agent がセットアップを案内し、変更をレビュー用にステージする。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Build%20by%20Chatting.png"
+        alt="Build by Chatting">
+      <figcaption>Build by Chatting</figcaption>
+    </figure>
+
+    <p>Build モードでは、変更は <strong>Build Draft</strong> に保存され、設定パネルに反映されます。設定パネルで何が変わったかを確認し、残したい変更は <strong>keep</strong>、不要なものは <strong>discard</strong> できます。</p>
+
+    <p>Agent は <code>build_note.md</code> も維持します。設定変更を追跡し、何を設定したか、まだ何に注意が必要かを記録し続けるドキュメントです。いつでも <strong>Preview</strong> で、ユーザーと同じように Agent を試せます。問題なければ、更新を公開してください。</p>
+
+    <h3>Agent はプロンプト以上のものです</h3>
+
+    <p>簡単なタスクなら、プロンプトだけで足りることもあります。しかし、ビジネスルール、参照資料、ツールの使い方、詳細な運用手順までプロンプトに詰め込むと、保守は難しくなります。</p>
+
+    <p>これを支えるため、Dify は New Agent の中で、各能力を明確で管理しやすい部品として切り出します。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/what.png"
+        alt="Agent の構成要素">
+    </figure>
+
+    <p>各部品は個別に保守できます。プロンプト全体を書き直さなくても、ツールを差し替えたり、スキルを磨いたりできます。</p>
+
+    <h3>Agent を拡張する3つの方法</h3>
+
+    <p>Dify は、すばやい探索からガバナンスされた本番利用まで、Agent の能力を広げる3つの方法を提供します。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Tool</th>
+            <th>Skill</th>
+            <th>サンドボックス内の CLI ツール</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>主な用途</strong></td>
+            <td>管理された外部能力をつなぐ</td>
+            <td>チームの手法と実践を残す</td>
+            <td>一時的な作業を扱う</td>
+          </tr>
+          <tr>
+            <td><strong>能力の種類</strong></td>
+            <td>プラグイン、API、MCP、Workflow as Tool</td>
+            <td>ガイド、参照資料、実行スクリプト</td>
+            <td>現在のセッション内のターミナルコマンド</td>
+          </tr>
+          <tr>
+            <td><strong>向いているケース</strong></td>
+            <td>本番での集中的なガバナンス</td>
+            <td>社内手法の一貫した再利用</td>
+            <td>すばやい探索と単発タスク</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>管理された連携のための Tools</strong></p>
+
+    <p>本番品質の連携で New Agent を強化できます。チームは <a href="https://marketplace.dify.ai/" target="_blank" rel="noopener noreferrer">Marketplace</a> の拡張機能を組み込み、カスタム API や MCP サーバーを接続し、既存のワークフローを Tool としてラップできます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Tools.png"
+        alt="Tools">
+      <figcaption>Tools</figcaption>
+    </figure>
+
+    <p>Tools はワークスペース単位で管理され、複数の Agent で共有されます。たとえばチャート作成ツールは、一度セットアップすれば十分です。異なる Agent が、データ分析、週次レポート作成、社内ダッシュボード用チャート作成に同じツールを使えます。</p>
+
+    <p>追加の設定が必要な能力には、<strong>Advanced Settings</strong> が環境変数を一箇所にまとめ、サンドボックス内の Agent から使えるようにします。エンドポイント、デフォルト値、ランタイム設定が変わっても、出現箇所を一つずつ探す必要はありません。</p>
+
+    <p><strong>繰り返し使える手法のための Skills</strong></p>
+
+    <p>Skill は、一緒に扱うべき指示、参照資料、スクリプトをパッケージ化します。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Skills%20Files.png"
+        alt="Skills Files">
+      <figcaption>Skills Files</figcaption>
+    </figure>
+
+    <p>たとえばグロース分析のスキルには、CTR、CPA、ROAS の定義と、それらを一貫して計算するスクリプトを含められます。Agent はプロンプトを肥大化させたり、別の Tool を作ったりせずに、同じ手法を複数のタスクで再利用できます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Preview%20Mode%20with%20Pie%20Chart.png"
+        alt="Preview with Pie Chart">
+      <figcaption>Preview with Pie Chart</figcaption>
+    </figure>
+
+    <p>Skills には、さらに続きます。現在取り組んでいる <strong>Skill Management</strong> では、Skills をワークスペース全体の共有リソースにします。チームは一箇所で Skills を管理・バージョン管理し、異なる Agent で再利用できるようになります。</p>
+
+    <p>プロセスが進化すれば、その背後にある Skills も進化できます。同じ手法に依存する Agent 同士の足並みを揃え続けられます。</p>
+
+    <p><strong>一時作業のための CLI ツール</strong></p>
+
+    <p>一度だけ必要なツールもあります。Agent の恒久的な構成に追加する代わりに、現在のサンドボックスセッションで CLI ツールをインストールして実行できます。</p>
+
+    <p>たとえば編集可能なグロース用デッキを依頼すると、Agent はサンドボックスに必要なものをインストールしてファイルを作成します。ログのパース、ファイル変換、データセットの処理といった単発作業でも同じです。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/CLI%20Tools.png"
+        alt="CLI Tools">
+      <figcaption>CLI Tools</figcaption>
+    </figure>
+
+    <p>同じ CLI セットアップが何度も出てくるようになったら、Skill にしましょう。その能力を複数の Agent で安定して使う必要があるなら、API、MCP サーバー、プラグイン、Workflow Tool として、共有の Dify 能力にします。</p>
+
+    <h2>毎回の修正を、次の実行の改善にする</h2>
+
+    <p>Agent を公開することは、構築の終わりではありません。実際の仕事が始まると、新しい実行がギャップを明らかにします。曖昧な指示、足りないコンテキスト、磨きが必要な手法です。</p>
+
+    <p>本当に役立つ問いは、単にこうではありません。</p>
+
+    <blockquote>
+      <p><strong>「この回答をどう直すか？」</strong></p>
+    </blockquote>
+
+    <p>こうです。</p>
+
+    <blockquote>
+      <p><strong>「その修正は、どこに置くべきか？」</strong></p>
+    </blockquote>
+
+    <p>商品比較 Agent を例にします。テスト中、2つの異なる商品の栄養成分が混ざってしまいました。プロンプトに指示を足せば、その回答は直ったかもしれません。しかし根本原因には届きません。</p>
+
+    <p>代わりに、各商品の情報を別々のレコードに分け、Skill を更新して、商品を個別に取得し、利用可能な根拠を検証し、存在しない情報を推測しないようにしました。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Product%20Comparison.png"
+        alt="Product Comparison Agent">
+      <figcaption>Product Comparison Agent</figcaption>
+    </figure>
+
+    <p>次のテストでは、Agent は2つの商品を分けたまま、アレルゲン、在庫、返金、プライバシーに関する質問を、正しい境界で扱いました。</p>
+
+    <p>1つの回答をその場しのぎで直すのではなく、Agent がタスクを扱う仕方そのものを改善しました。その改善は、その後のすべての実行に引き継がれます。</p>
+
+    <h2>Manage: 一度構築し、どこでも再利用する</h2>
+
+    <p>Agent をコピーするのは簡単です。すべてのコピーを最新に保つには、同じ変更を何度も繰り返すことになります。</p>
+
+    <p>同じプロンプト、スキル、ツール、設定が複数のアプリに散らばると、更新のたびにやり直しです。やがてチームは、どれが最新のコピーなのか分からなくなります。</p>
+
+    <p>New Agent 体験は、それらのコピーを、1つの共有 Agent に置き換えます。Agent ページは、ステータス、作成者、更新日時で Agent を探し、管理する中心の場所です。各 Agent には、名前、説明、設定、公開状態があります。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Agent%20Console.png"
+        alt="Agent Console">
+      <figcaption>Agent Console</figcaption>
+    </figure>
+
+    <h3>1つの Agent、複数のアクセスポイント</h3>
+
+    <p>Agent は Web アプリとして公開したり、API として公開したり、複数のワークフローで再利用したりできます。同じ Agent が、設定を複製せずに異なる文脈で働けます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/where.png"
+        alt="Agent Works Across Different Platforms">
+      <figcaption>Agent Works Across Different Platforms</figcaption>
+    </figure>
+
+    <p><strong>Access Points</strong> は、その Agent がどこで利用可能か、どのワークフローが使っているかを示します。共有設定の変更を公開する前に、メンテナーは影響範囲を把握できます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/How%20to%20Use%20Agent%201.png"
+        alt="Access Point">
+      <figcaption>Access Point</figcaption>
+    </figure>
+
+    <h3>ワークフロー内でタスクを定義する</h3>
+
+    <p>同じ Agent が、ワークフローごとに異なる役割を担います。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Add%20Agent%20in%20Workflow.png"
+        alt="Add Agent in Workflow">
+      <figcaption>Add Agent in Workflow</figcaption>
+    </figure>
+
+    <p>ワークフローを組む人は、Agent のプロンプト、スキル、ツールを再設定する必要はありません。代わりに <strong>Agent Task</strong> で、現在のノードで Agent が何をすべきか、どの上流変数を使えるか、どんな結果を出すべきかを定義します。<strong>宣言的な出力（declarative outputs）</strong> により、その結果をあらかじめ決めた構造で下流ノードに渡せます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/CleanShot%202026-08-31%20at%2014.19.50@2x.png"
+        alt="Declarative output">
+      <figcaption>Declarative output</figcaption>
+    </figure>
+
+    <p>例を見てみましょう。グロースに関する質問に答え、指標を計算し、チャートを作れる Growth Analytics Agent を作ったとします。単独でも使えますし、同じ Agent を Campaign Analysis ワークフローに組み込み、より焦点を絞ったタスクを与えることもできます。そこからワークフローが、品質チェック、分岐、人によるレビューを担当します。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Agent%20Task.png"
+        alt="Agent Task">
+      <figcaption>Agent Task</figcaption>
+    </figure>
+
+    <p>単一ワークフローに閉じた一時的な能力なら、空の Agent ノードから始めてください。後で他の文脈でも役立つと分かったら、Agents に保存して中央で管理できます。</p>
+
+    <p>一度構築し、必要な場所に同じ能力を適用します。共有能力は一貫したまま、タスクの境界は明確に保てます。</p>
+
+    <h2>Track: 何が起きたかを見る</h2>
+
+    <p>Agent が複数のアクセスポイントとワークフローで使われるようになると、最終回答だけでは問題の所在を特定できません。チームが知る必要があるのは、どの Agent が関与したか、いつどこで実行されたか、どのアクセスポイントまたはワークフローがトリガーしたかです。</p>
+
+    <p>Dify は、個別の実行から長期パフォーマンスまで、3つのレベルの可観測性を提供します。</p>
+
+    <h3>単一実行: Logs と Tracing</h3>
+
+    <p>ログとトレーシングは、ユーザー入力から最終応答まで、各実行で何が起きたかを示します。各実行にはアクセスポイントが含まれるため、問題が特定のソース由来なのか、共有 Agent 設定由来なのかを判断しやすくなります。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Agent%20Logs.png"
+        alt="Agent Logs">
+      <figcaption>Agent Logs</figcaption>
+    </figure>
+
+    <h3>ワークフローノード: Agent ワークフローを精密にデバッグする</h3>
+
+    <p>Agent がワークフロー内で動くとき、<strong>Last Run</strong> と <strong>Variable Inspect</strong> で実行ステップとノード間で渡されたデータを検査でき、問題が Agent 側か周囲のワークフロー側かを切り分けやすくなります。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/CleanShot%202026-08-28%20at%2017.57.46@2x.png"
+        alt="Last Run">
+      <figcaption>Last Run</figcaption>
+    </figure>
+
+    <h3>システムトレンド: 運用モニタリング</h3>
+
+    <p>チームは、利用量、品質、パフォーマンス、コストを時系列で追跡し、バージョンや文脈をまたいで結果を比較できます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Agent%20Monitoring.png"
+        alt="Agent Monitoring">
+      <figcaption>Agent Monitoring</figcaption>
+    </figure>
+
+    <p>Dify は <strong>Workflow log archives</strong> も導入します。過去の実行を月ごとに整理し、長期調査、運用分析、内部監査のためにダウンロードできます。</p>
+
+    <figure>
+      <img
+        src="https://assets.dify.ai/cdn-cgi/image/format=auto,width=1472,onerror=redirect/official/blog/2026/08/Archived%20Logs.png"
+        alt="Archived Logs">
+      <figcaption>Archived Logs</figcaption>
+    </figure>
+
+    <p>ログアーカイブは Community Edition では利用できません。保持期間とアーカイブの詳細は → <a href="https://docs.dify.ai/en/cloud/use-dify/monitor/logs" target="_blank" rel="noopener noreferrer">ドキュメント</a></p>
+
+    <h1 class="section">Dify の中核の上に築く</h1>
+
+    <p>New Agent 体験は、Dify が常に中核としてきた4つのことを拡張します。</p>
+
+    <ul>
+      <li><strong>モデル非依存</strong> — 商用モデルでもセルフホストモデルでも、ベンダーロックインなし。パフォーマンス、コスト、コンプライアンスのバランスを取れます。</li>
+      <li><strong>ビジュアルな構築</strong> — 実際のタスクから始める。Build モードで磨く。自然言語での探索と、ビジネスと技術のチームが一緒にレビューできる透明で構造化された設定を組み合わせます。</li>
+      <li><strong>柔軟な組み合わせ</strong> — Agent をスタンドアロンで使う、API でつなぐ、データ処理・ビジネスルール・人による承認と並んでワークフローに埋め込む。1つの能力、多くの文脈。</li>
+      <li><strong>透明なコントロール</strong> — ログ、トレーシング、モニタリング、バージョン管理、認証情報の分離、Human Input により、見えるガバナンスされた境界の中で Agent を運用します。Agent は、見える境界の中にとどまります。</li>
+    </ul>
+
+    <p>エンタープライズにとって難しいのは、たいてい1つの Agent を作ることではありません。その Agent を組織全体で安全に再利用し、長期にわたって保守し、明確な可観測性とガバナンスのもとで本番運用できるようにすることです。Dify はモデル、Agent、ワークフロー、API、ランタイムの可視性を1つのプラットフォームにまとめ、チームが共有能力を一貫したやり方で構築・デプロイ・改善できるようにします。</p>
+
+    <h1 class="section">構築を始める</h1>
+
+    <p>New Agent は動的な判断を提供し、ワークフローはプロセスの構造とコントロールを提供します。両者を組み合わせることで、企業はローンチ前にあらゆる状況を先回りして想定するのではなく、実際のユースケースから始め、ビジネスの進化に合わせて改善し続けられます。</p>
+
+    <p>まずは1つの実際の業務から始めてください。実際の実行を通じて Agent を磨き、実証された能力を組織のより広い範囲で再利用しましょう。Agent の設定方法は <a href="https://docs.dify.ai/en/cloud/use-dify/build/new-agent/build" target="_blank" rel="noopener noreferrer">ドキュメント</a> をご覧ください。</p>
+
+    <p>
+      <a class="cta" href="https://cloud.dify.ai/agents?utm_source=dify_blog&amp;slug=introducing-new-dify-agent" target="_blank" rel="noopener noreferrer">今すぐ Agent を構築する</a>
+    </p>
+
+    <p class="source">
+      本ページは <a href="https://dify.ai/blog/introducing-new-dify-agent" target="_blank" rel="noopener noreferrer">https://dify.ai/blog/introducing-new-dify-agent</a> の日本語訳です。図は原文のアセットをそのまま埋め込んでいます。
+    </p>
+  </article>
+</body>
+</html>
