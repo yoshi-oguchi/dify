@@ -1,0 +1,27 @@
+{
+  "name": "Dify",
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "terminals": [
+    {
+      "name": "api",
+      "command": "export PATH=\"$HOME/.local/bin:$PATH\"; cd api && uv run flask run --host 0.0.0.0 --port=5001 --debug",
+      "description": "Dify backend API (Flask) on http://localhost:5001"
+    },
+    {
+      "name": "worker",
+      "command": "export PATH=\"$HOME/.local/bin:$PATH\"; cd api && uv run celery -A app.celery worker -P gevent -c 1 --loglevel INFO -Q dataset,generation,mail,ops_trace,app_deletion",
+      "description": "Dify Celery worker for async tasks (dataset indexing, generation, mail, etc.)"
+    },
+    {
+      "name": "web",
+      "command": "cd web && pnpm dev",
+      "description": "Dify frontend (Next.js) on http://localhost:3000"
+    }
+  ],
+  "ports": [
+    { "name": "web", "port": 3000 },
+    { "name": "api", "port": 5001 },
+    { "name": "plugin_daemon", "port": 5002 }
+  ]
+}
