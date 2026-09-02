@@ -10,15 +10,20 @@ export PATH="$HOME/.local/bin:$PATH"
 
 log() { printf '\n=== %s ===\n' "$*"; }
 
+# Use a root-owned log path. A snapshot may persist /tmp/dockerd.log owned by
+# a non-root user, and this VM blocks even root (via sudo) from writing to
+# files owned by another user, which would break the log redirect below.
+DOCKERD_LOG=/var/log/dify-dockerd.log
+
 log "Starting Docker daemon"
 if ! sudo docker info >/dev/null 2>&1; then
-  sudo rm -f /var/run/docker.pid || true
-  sudo setsid bash -c 'dockerd >/tmp/dockerd.log 2>&1' </dev/null &
+  sudo rm -f /var/run/docker.pid /tmp/dockerd.log || true
+  sudo setsid bash -c "dockerd >'$DOCKERD_LOG' 2>&1" </dev/null &
   for _ in $(seq 1 60); do sudo docker info >/dev/null 2>&1 && break; sleep 1; done
 fi
 if ! sudo docker info >/dev/null 2>&1; then
   echo "Docker daemon failed to start:" >&2
-  tail -n 40 /tmp/dockerd.log >&2 || true
+  sudo tail -n 40 "$DOCKERD_LOG" >&2 || true
   exit 1
 fi
 
@@ -35,7 +40,14 @@ sudo sysctl -w net.bridge.bridge-nf-call-iptables=0 >/dev/null 2>&1 || true
 sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=0 >/dev/null 2>&1 || true
 
 log "Starting middleware stack (postgres, redis, sandbox, ssrf_proxy, plugin_daemon, weaviate)"
-(cd docker && sudo docker compose -f docker-compose.middleware.yaml --profile weaviate -p dify up -d)
+(cd docker && sudo docker compose -f docker-compose.middleware.yaml --profile weaviate -p dify up -d --remove-orphans)
+
+# The sandbox initializes its runtime (e.g. its Node.js project) into its own
+# writable container layer. A layer captured in a snapshot can crash-loop on a
+# later boot, so recreate the sandbox from a fresh layer. Named volumes (e.g.
+# the Postgres data dir) are preserved across recreation.
+log "Recreating sandbox with a fresh layer"
+(cd docker && sudo docker compose -f docker-compose.middleware.yaml --profile weaviate -p dify up -d --force-recreate --no-deps sandbox)
 
 log "Waiting for PostgreSQL to become healthy"
 for _ in $(seq 1 60); do
