@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b0d12">
   <title>New Agent のご紹介 — Dify</title>
   <meta name="description" content="Dify の Agent は、独立したアプリとして、あるいはワークフローで再利用できるリソースとして使えるようになりました。一度構築し、継続的に改善し、Web アプリ・API・複数ワークフローで公開・再利用できます。">
   <meta name="author" content="Dify">
@@ -12,19 +14,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink: #101828;
-      --ink-muted: #475467;
-      --fog: #667085;
-      --line: #e4e7ec;
-      --bg: #ffffff;
-      --bg-soft: #f9fafb;
-      --brand: #0033ff;
-      --brand-hover: #0029cc;
-      --quote: #f2f4f7;
-      --table-head: #f8fafc;
+      --ink: #eef1f6;
+      --ink-muted: #b4bcc9;
+      --fog: #8b94a3;
+      --line: #2a3140;
+      --bg: #0b0d12;
+      --bg-soft: #151922;
+      --brand: #6b8aff;
+      --brand-hover: #8aa3ff;
+      --quote: #1b212c;
+      --table-head: #171c26;
+      --cta: #3d5cff;
+      --cta-hover: #5470ff;
     }
 
     * { box-sizing: border-box; }
+
+    html {
+      color-scheme: dark;
+    }
 
     html, body {
       margin: 0;
@@ -126,7 +134,7 @@
       color: var(--fog);
       padding: 10px 14px 12px;
       border-top: 1px solid var(--line);
-      background: #fff;
+      background: var(--bg-soft);
     }
 
     h1, h2, h3 {
@@ -186,6 +194,7 @@
       margin: 20px 0 28px;
       border: 1px solid var(--line);
       border-radius: 12px;
+      background: var(--bg-soft);
     }
 
     table {
@@ -215,14 +224,19 @@
       justify-content: center;
       margin-top: 8px;
       padding: 12px 22px;
-      background: var(--brand);
+      background: var(--cta);
       color: #fff !important;
       border-radius: 999px;
       font-weight: 600;
       text-decoration: none !important;
     }
 
-    .cta:hover { background: var(--brand-hover); }
+    .cta:hover { background: var(--cta-hover); }
+
+    ::selection {
+      background: #2c3d73;
+      color: #fff;
+    }
 
     .source {
       margin-top: 56px;
