@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-theme="dark" style="color-scheme:dark;background-color:#1d1d20;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0b0d12">
+  <meta name="color-scheme" content="dark only">
+  <meta name="theme-color" content="#1d1d20">
+  <meta name="supported-color-schemes" content="dark">
   <title>New Agent のご紹介 — Dify</title>
   <meta name="description" content="Dify の Agent は、独立したアプリとして、あるいはワークフローで再利用できるリソースとして使えるようになりました。一度構築し、継続的に改善し、Web アプリ・API・複数ワークフローで公開・再利用できます。">
   <meta name="author" content="Dify">
@@ -13,43 +14,49 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --ink: #eef1f6;
-      --ink-muted: #b4bcc9;
-      --fog: #8b94a3;
-      --line: #2a3140;
-      --bg: #0b0d12;
-      --bg-soft: #151922;
+    :root,
+    html,
+    html[data-theme="dark"] {
+      color-scheme: dark only;
+      --ink: #f4f4f5;
+      --ink-muted: #c8ceda;
+      --fog: #a1a1aa;
+      --line: #3a3a40;
+      --bg: #1d1d20;
+      --bg-soft: #222225;
       --brand: #6b8aff;
       --brand-hover: #8aa3ff;
-      --quote: #1b212c;
-      --table-head: #171c26;
-      --cta: #3d5cff;
-      --cta-hover: #5470ff;
+      --quote: #27272a;
+      --table-head: #27272a;
+      --cta: #155aef;
+      --cta-hover: #296dff;
     }
 
     * { box-sizing: border-box; }
 
-    html {
-      color-scheme: dark;
-    }
-
     html, body {
       margin: 0;
       padding: 0;
-      background: var(--bg);
-      color: var(--ink);
+      min-height: 100%;
+      background: #1d1d20 !important;
+      background-color: #1d1d20 !important;
+      color: #f4f4f5 !important;
       font-family: "Inter", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
       line-height: 1.8;
       font-size: 17px;
       -webkit-font-smoothing: antialiased;
     }
 
+    body {
+      min-height: 100vh;
+    }
+
     a { color: var(--brand); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
     .topbar {
-      border-bottom: 1px solid var(--line);
+      background: #18181b;
+      border-bottom: 1px solid #3a3a40;
       padding: 16px 24px;
     }
 
@@ -70,6 +77,8 @@
       max-width: 760px;
       margin: 0 auto;
       padding: 56px 24px 96px;
+      background: transparent;
+      color: #f4f4f5;
     }
 
     .kicker {
@@ -137,10 +146,15 @@
       background: var(--bg-soft);
     }
 
+    h1, h2, h3, p, li, td, th, figcaption, .source, .kicker, .lead-note {
+      color: inherit;
+    }
+
     h1, h2, h3 {
       letter-spacing: -0.02em;
       line-height: 1.35;
       font-weight: 700;
+      color: #f4f4f5;
     }
 
     h1.section {
@@ -252,7 +266,7 @@
     }
   </style>
 </head>
-<body>
+<body style="background-color:#1d1d20;color:#f4f4f5;margin:0;min-height:100vh;">
   <div class="topbar">
     <div class="topbar-inner">
       <span>Dify ブログ（日本語訳）</span>
