@@ -26,6 +26,14 @@ log "Granting docker group access to the socket"
 sudo chown root:docker /var/run/docker.sock || true
 sudo chmod 660 /var/run/docker.sock || true
 
+# In the nested Cloud Agent VM, bridged traffic filtered through iptables is
+# dropped, which breaks container-to-container connectivity (e.g. the plugin
+# daemon reaching Postgres). Disable bridge netfilter so same-network
+# containers communicate directly at layer 2.
+log "Disabling bridge netfilter for container-to-container connectivity"
+sudo sysctl -w net.bridge.bridge-nf-call-iptables=0 >/dev/null 2>&1 || true
+sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=0 >/dev/null 2>&1 || true
+
 log "Starting middleware stack (postgres, redis, sandbox, ssrf_proxy, plugin_daemon, weaviate)"
 (cd docker && sudo docker compose -f docker-compose.middleware.yaml --profile weaviate -p dify up -d)
 
